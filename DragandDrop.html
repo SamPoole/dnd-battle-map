@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Battlemap</title>
+    <script src="JScript/interact.min.js"></script>
+    <style>
+		:root {
+			--image-width: 1920px;
+			--image-height: 1080px;
+			--tile-size: 60px;
+			--grid-size: 2px;
+			--grid-colour: Black;
+		}
+		#main {
+			height: 1080px;
+			position: relative;
+			width: 1920px;
+			background-image: url("Maps/TownMarket.png");
+			background-repeat: no-repeat;
+			margin: -8px 0px 0 -8px;
+		}
+		.grid {
+			background-image: repeating-linear-gradient(0deg,transparent,transparent calc(var(--tile-size) - var(--grid-size)),var(--grid-colour) calc(var(--tile-size) - var(--grid-size)),var(--grid-colour) var(--tile-size)),
+							  repeating-linear-gradient(-90deg,transparent,transparent calc(var(--tile-size) - var(--grid-size)),var(--grid-colour) calc(var(--tile-size) - var(--grid-size)),var(--grid-colour) var(--tile-size));
+			background-size: var(--tile-size) var(--tile-size);
+			height: 100%;
+			position: absolute;
+			width: 100%;
+		}
+		.sidebar { height:75%;width:200px;background-color:rgb(0,0,0,0.7);position:fixed!important;z-index:1;margin-top: 8px;
+		}
+		.sidebar_button { 
+		  width: 190px; 
+		  position: fixed; 
+		  margin-left: 0px;
+		  margin-top: 8px;
+		  z-index: 1;
+		}
+		.sidebar_text_input {
+			width: 200px
+		}
+		#owlbear {
+			width: 100%;
+            height: 100%;
+            max-height: var(--tile-size);
+			max-width: var(--tile-size);
+            background-image: url("Beast/owlbear.gif");
+			background-size: 100% 100%;
+            -webkit-transform: translate(0px, 0px);
+            transform: translate(0px, 0px);
+		}
+		#beholder {
+			width: 100%;
+            height: 100%;
+            max-height: var(--tile-size);
+			max-width: var(--tile-size);
+            background-image: url("Beast/Beholder.png");
+			background-size: 100% 100%;
+            -webkit-transform: translate(0px, 0px);
+            transform: translate(0px, 0px);
+		}
+   </style>
+</head>
+<body>
+
+	<script>
+	
+		var htmlStyles = window.getComputedStyle(document.querySelector("html"));
+		var gridSize = parseInt(htmlStyles.getPropertyValue("--tile-size"));
+		
+		function sidebar_open() {
+		  document.getElementById("sidebar").style.display = "block";
+		  document.getElementById("sidebar_button").style.display = "none";
+		}
+
+		function sidebar_close() {
+		  document.getElementById("sidebar").style.display = "none";
+		  document.getElementById("sidebar_button").style.display = "block";
+		}
+		
+		function sidebar_grid_colour() {
+			if (htmlStyles.getPropertyValue('--grid-colour') === 'Black') {
+			document.documentElement.style.setProperty('--grid-colour', 'Red');
+			} else if (htmlStyles.getPropertyValue('--grid-colour') === 'Red') {
+			document.documentElement.style.setProperty('--grid-colour', 'White');
+			} else { 
+				document.documentElement.style.setProperty('--grid-colour', 'Black')
+			}
+		}
+		
+		// target elements with the "draggable" class
+		interact('.draggable')
+		  .draggable({
+			snap: {
+			  targets: [
+				interact.createSnapGrid({ x: gridSize, y: gridSize, offset: { x: 1, y: 1} })
+			  ],
+			  range: Infinity,
+			  relativePoints: [ { x: 0, y: 0 } ]
+			},
+			// enable inertial throwing
+			inertia: true,
+			// keep the element within the area of it's parent
+			restrict: {
+			  restriction: "parent",
+			  endOnly: true,
+			  elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+			},
+			// enable autoScroll
+			autoScroll: true,
+			// call this function on every dragmove event
+			onmove: dragMoveListener,
+
+		  });
+
+		function dragMoveListener (event) {
+			var target = event.target,
+				// keep the dragged position in the data-x/data-y attributes
+				x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+				y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+			// translate the element
+			target.style.webkitTransform =
+			target.style.transform =
+			  'translate(' + x + 'px, ' + y + 'px)';
+
+			// update the posiion attributes
+			target.setAttribute('data-x', x);
+			target.setAttribute('data-y', y);
+		}
+
+		// this is used later in the resizing and gesture demos
+		window.dragMoveListener = dragMoveListener;
+	</script>
+
+	<div class = "sidebar_button" style="Display=block" id = "sidebar_button">
+		<button style="Button" onclick="sidebar_open()">☰</button>
+	</div> 
+
+	<div class="sidebar" style="display:none" id = "sidebar"> 
+	   <button onclick="sidebar_close()" type="Button">☰</button> 
+	   <br>
+	   <button onclick="sidebar_grid_colour()" type="Button">Gridline Colour</button>
+	</div> 	
+
+	
+	
+	
+    <div id="main">
+		<div class="grid">
+		</div>
+	<div id="owlbear" class="draggable" >
+	</div>
+	<div id="beholder" class="draggable" >
+	</div>
+
+
+    </div>
+	
+    
+</body>
+</html>
