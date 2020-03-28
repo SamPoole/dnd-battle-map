@@ -42,7 +42,7 @@
 			margin-left: var(--x-offset);
 			margin-top: var(--y-offset);
 		}
-		.sidebar { height:75%;width:200px;background-color:rgb(0,0,0,0.7);position:fixed!important;z-index:1;margin-top: 8px; color: White;
+		.sidebar { height:75%;width:200px;background-color:rgb(0,0,0,0.3);position:fixed!important;z-index:1;margin-top: 8px; color: White;
 		}
 		.sidebar_button {
 		  width: 190px;
@@ -135,6 +135,11 @@
 			value_update_tile_size();
 		}
 
+		function background_update() {
+			mapString = document.getElementById("backgroundInput").value;
+			document.documentElement.style.setProperty('--background-image', "url(./Maps/" + mapString + ")");
+		}
+
 		function spawn_creature() {
 			y = document.getElementById("monsterSpawn").value;
 			z = document.getElementById("monsterSpawnNumber").value;
@@ -186,9 +191,8 @@
 				<option value="3">3</option>
 			</select><br>
 
-      <!-- see this for later https://www.impressivewebs.com/onchange-vs-oninput-for-range-sliders/ -->
 			<label for="tileWidth">Tile Width:</label><br>
-			<input type="range" id="tileWidthInput" name="tileWidth" min="25" max="250" value="70" oninput="value_update()"><br>
+			<input type="range" id="tileWidthInput" name="tileWidth" min="5" max="250" value="70" oninput="value_update()"><br>
 			<label for="tileXOffset">X Offset:</label><br>
 			<input type="range" id="tileXOffsetInput" name="tileXOffset" min="-125" max="125" value="10" oninput="value_update()"><br>
 			<label for="tileYOffset">Y Offset:</label><br>
@@ -213,6 +217,16 @@
 		<br>
 		<button onclick="spawn_creature()" type="Button">Spawn Monster</button>
 		<button onclick="destroy_creature()" type="Button">Remove Monster</button>
+
+		<br><br>
+
+		Map:<br>
+		<label for="backgroundInput">Background Input:</label><br>
+		<select id="backgroundInput" oninput="background_update()">
+			<option value="towncross.jpg">Town Cross</option>
+			<option value="mine.png">Mine</option>
+			<option value="townmarket.png">Town Market</option>
+		</select><br>
 
 	</div>
 
