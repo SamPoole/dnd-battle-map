@@ -149,7 +149,7 @@
 				div.id = "monster" + y + z;
 				div.classList.add(x);
 				div.classList.add("draggable");
-				div.style.backgroundImage = "url('./Beast/" + y + ".gif')";
+				div.style.backgroundImage = "url('./Beasts/" + y + ".gif')";
 				div.style.transform = "translate(" + htmlStyles.getPropertyValue("--x-offset") + ", " + htmlStyles.getPropertyValue("--y-offset") + ")";
 				$( div ).draggable({
 					grid: [parseInt(htmlStyles.getPropertyValue("--tile-width")),
@@ -166,6 +166,33 @@
 			z = document.getElementById("monsterSpawnNumber").value;
 			var element = document.getElementById("monster" + y + z);
 			element.parentNode.removeChild(element);
+		}
+
+		function spawn_player(characterName) {
+			// Destroy if it already exists
+			if (document.contains(document.getElementById(characterName))) {
+            document.getElementById(characterName).remove();
+					}
+			// Create new div
+			var div = document.createElement("div");
+				div.id = characterName;
+				div.classList.add("medium");
+				div.classList.add("draggable");
+				div.style.backgroundImage = "url('./Characters/" + characterName + ".jpg')";
+				div.style.transform = "translate(" + htmlStyles.getPropertyValue("--x-offset") + ", " + htmlStyles.getPropertyValue("--y-offset") + ")";
+				$( div ).draggable({
+					grid: [parseInt(htmlStyles.getPropertyValue("--tile-width")),
+								 parseInt(htmlStyles.getPropertyValue("--tile-width"))
+							 ]});
+			document.getElementById("main").appendChild(div);
+		}
+
+		function spawn_players() {
+			spawn_player("Choke");
+			spawn_player("FaceSmasher");
+			spawn_player("Bardolemew");
+			spawn_player("Lucy");
+			spawn_player("Wen");
 		}
 
 	</script>
@@ -201,9 +228,7 @@
 			<input type="range" id="tileXOffsetInput" name="tileXOffset" min="-125" max="125" value="10" oninput="value_update()"><br>
 			<label for="tileYOffset">Y Offset:</label><br>
 			<input type="range" id="tileYOffsetInput" name="tileYOffset" min="-125" max="125" value="10" oninput="value_update()">
-		</form>
-
-		<br><br>
+		</form><br>
 
 		Monster:<br>
 		<select id="monsterSpawn">
@@ -229,13 +254,16 @@
 
 		<br><br>
 
-		Map:<br>
-		<label for="backgroundInput">Background Input:</label><br>
+		<label for="backgroundInput">Map:</label><br>
 		<select id="backgroundInput" oninput="background_update()">
 			<option value="towncross.jpg">Town Cross</option>
 			<option value="mine.png">Mine</option>
 			<option value="townmarket.png">Town Market</option>
-		</select><br>
+		</select>
+
+		<br><br>
+
+		<button onclick="spawn_players()" type="Button">Refresh Players</button>
 
 	</div>
 
