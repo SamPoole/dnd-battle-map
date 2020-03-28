@@ -51,27 +51,28 @@
 		  margin-top: 8px;
 		  z-index: 1;
 		}
-		.owlbear {
+		.medium {
 			width: 100%;
-            height: 100%;
-            max-height: var(--tile-height);
-			max-width: var(--tile-width);
-            background-image: url("Beast/owlbear.gif");
+      height: 100%;
+      max-height: var(--tile-height);
+			max-width:  var(--tile-width);
 			background-size: 100% 100%;
-            -webkit-transform: translate(0px, 0px);
-            transform: translate(0px, 0px);
 		}
-		.beholder {
+		.large {
 			width: 100%;
-            height: 100%;
-            max-height: calc( var(--tile-height) * 2 );
-			max-width: calc( var(--tile-width) * 2 );
-            background-image: url("Beast/Beholder.png");
+			height: 100%;
+			max-height: calc(2 * var(--tile-height));
+			max-width:  calc(2 * var(--tile-width));
 			background-size: 100% 100%;
-            -webkit-transform: translate(0px, 0px);
-            transform: translate(0px, 0px);
 		}
-		.draggable { float: left; margin-top: var(--y-offset); margin-left: var(--x-offset); }
+		.huge {
+			width: 100%;
+			height: 100%;
+			max-height: calc(3 * var(--tile-height));
+			max-width:  calc(3 * var(--tile-width));
+			background-size: 100% 100%;
+		}
+		.draggable { float: left; }
    </style>
 </head>
 <body>
@@ -143,10 +144,13 @@
 		function spawn_creature() {
 			y = document.getElementById("monsterSpawn").value;
 			z = document.getElementById("monsterSpawnNumber").value;
+			x = document.getElementById("monsterSpawnSize").value;
 			var div = document.createElement("div");
 				div.id = "monster" + y + z;
-				div.classList.add(y);
+				div.classList.add(x);
 				div.classList.add("draggable");
+				div.style.backgroundImage = "url('./Beast/" + y + ".gif')";
+				div.style.transform = "translate(" + htmlStyles.getPropertyValue("--x-offset") + ", " + htmlStyles.getPropertyValue("--y-offset") + ")";
 				$( div ).draggable({
 					grid: [parseInt(htmlStyles.getPropertyValue("--tile-width")),
 								 parseInt(htmlStyles.getPropertyValue("--tile-width"))
@@ -213,6 +217,11 @@
 			<option value="3">3</option>
 			<option value="4">4</option>
 			<option value="5">5</option>
+		</select>
+		<select id="monsterSpawnSize">
+			<option value="medium">Medium</option>
+			<option value="large" >Large </option>
+			<option value="huge"  >Huge  </option>
 		</select>
 		<br>
 		<button onclick="spawn_creature()" type="Button">Spawn Monster</button>
