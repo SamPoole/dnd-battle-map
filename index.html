@@ -2,15 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Spawntest</title>
+    <title>Sam's Battle Map</title>
 		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-		<script>
-		$( function() {
-			$( "#draggable4" ).draggable({ grid: [ 20, 20 ] });
-			$( "draggable" ).draggable({ grid: [ 80, 80 ] });
-} );
-</script>
     <style>
 		:root {
 			--image-width: 1920px;
@@ -40,9 +34,9 @@
 			position: absolute;
 			width: 100%;
 			margin-left: var(--x-offset);
-			margin-top: var(--y-offset);
+			margin-top:  var(--y-offset);
 		}
-		.sidebar { height:75%;width:200px;background-color:rgb(0,0,0,0.3);position:fixed!important;z-index:1;margin-top: 8px; color: White;
+		.sidebar { height:95%;width:215px;background-color:rgb(0,0,0,0.75);position:fixed!important;z-index:1;margin-top: 8px; color: White;
 		}
 		.sidebar_button {
 		  width: 190px;
@@ -54,22 +48,28 @@
 		.medium {
 			width: 100%;
       height: 100%;
-      max-height: var(--tile-height);
-			max-width:  var(--tile-width);
+      max-height: calc(var(--tile-height) - var(--grid-line-width));
+			max-width:  calc(var(--tile-width)  - var(--grid-line-width));
+			margin-left: var(--grid-line-width);
+			margin-top:  var(--grid-line-width);
 			background-size: 100% 100%;
 		}
 		.large {
 			width: 100%;
 			height: 100%;
-			max-height: calc(2 * var(--tile-height));
-			max-width:  calc(2 * var(--tile-width));
+			max-height: calc(2 * var(--tile-height) - var(--grid-line-width));
+			max-width:  calc(2 * var(--tile-width) - var(--grid-line-width));
+			margin-left: var(--grid-line-width);
+			margin-top:  var(--grid-line-width);
 			background-size: 100% 100%;
 		}
 		.huge {
 			width: 100%;
 			height: 100%;
-			max-height: calc(3 * var(--tile-height));
-			max-width:  calc(3 * var(--tile-width));
+			max-height: calc(3 * var(--tile-height) - var(--grid-line-width));
+			max-width:  calc(3 * var(--tile-width) - var(--grid-line-width));
+			margin-left: var(--grid-line-width);
+			margin-top:  var(--grid-line-width);
 			background-size: 100% 100%;
 		}
 		.draggable { float: left; }
@@ -100,40 +100,26 @@
 		  document.getElementById("sidebar_button").style.display = "block";
 		}
 
-		function sidebar_grid_colour() {
-			if (htmlStyles.getPropertyValue('--grid-colour') === 'Black') {
-			document.documentElement.style.setProperty('--grid-colour', 'Red');
-			} else if (htmlStyles.getPropertyValue('--grid-colour') === 'Red') {
-			document.documentElement.style.setProperty('--grid-colour', 'White');
-			} else {
-				document.documentElement.style.setProperty('--grid-colour', 'Black')
-			}
-		}
-
-		function value_update_colour() {
+		function value_update_line_colour() {
 			x = document.getElementById("gridColourInput").value;
 			document.documentElement.style.setProperty('--grid-colour', x);
 		}
-
-		function value_update_width() {
-			y = document.getElementById("gridWidthInput").value;
-			document.documentElement.style.setProperty('--grid-line-width', y + "px");
+		function value_update_line_width() {
+			x = document.getElementById("gridWidthInput").value;
+			document.documentElement.style.setProperty('--grid-line-width', x + "px");
 		}
 
-		function value_update_tile_size() {
+		function value_update_grid_size() {
 			x = document.getElementById("tileWidthInput").value;
-			y = document.getElementById("tileXOffsetInput").value;
-			z = document.getElementById("tileYOffsetInput").value;
-
 			document.documentElement.style.setProperty('--tile-width', x + "px");
-			document.documentElement.style.setProperty('--x-offset', y + "px");
-			document.documentElement.style.setProperty('--y-offset', z + "px");
 		}
-
-		function value_update() {
-			value_update_colour();
-			value_update_width();
-			value_update_tile_size();
+		function value_update_grid_x_offset() {
+			x = document.getElementById("tileXOffsetInput").value;
+			document.documentElement.style.setProperty('--x-offset', x + "px");
+		}
+		function value_update_grid_y_offset() {
+			x = document.getElementById("tileYOffsetInput").value;
+			document.documentElement.style.setProperty('--y-offset', x + "px");
 		}
 
 		function background_update() {
@@ -145,12 +131,20 @@
 			y = document.getElementById("monsterSpawn").value;
 			z = document.getElementById("monsterSpawnNumber").value;
 			x = document.getElementById("monsterSpawnSize").value;
+			// return if it already exists
+			if (document.contains(document.getElementById("monster_" + y + "_" + z))) {
+						return;
+					}
+			translate_x = htmlStyles.getPropertyValue("--x-offset");
+			translate_y = htmlStyles.getPropertyValue("--y-offset");
+
 			var div = document.createElement("div");
-				div.id = "monster" + y + z;
+				div.id = "monster_" + y + "_" + z;
 				div.classList.add(x);
 				div.classList.add("draggable");
-				div.style.backgroundImage = "url('./Beasts/" + y + ".gif')";
-				div.style.transform = "translate(" + htmlStyles.getPropertyValue("--x-offset") + ", " + htmlStyles.getPropertyValue("--y-offset") + ")";
+				div.classList.add("container")
+				div.style.backgroundImage = "url('./Beasts/" + y + "')";
+				div.style.transform = "translate(" + translate_x + ", " + translate_y + ")";
 				$( div ).draggable({
 					grid: [parseInt(htmlStyles.getPropertyValue("--tile-width")),
 								 parseInt(htmlStyles.getPropertyValue("--tile-width"))
@@ -159,17 +153,51 @@
 				divNumber.style
 				div.appendChild(divNumber);
 			document.getElementById("main").appendChild(div);
+			// Sidebar
+			var sidebarDiv = document.createElement("div");
+				sidebarDiv.id = "sidebar_monster_" + y + "_" + z;
+				var divLabel = document.createTextNode(y + " " + z + ": ");
+				var divInput = document.createElement("input");
+					divInput.setAttribute("type", "text");
+				sidebarDiv.appendChild(divLabel);
+				sidebarDiv.appendChild(divInput);
+			document.getElementById("sidebar").appendChild(sidebarDiv);
 		}
-
 		function destroy_creature() {
 			y = document.getElementById("monsterSpawn").value;
 			z = document.getElementById("monsterSpawnNumber").value;
-			var element = document.getElementById("monster" + y + z);
-			element.parentNode.removeChild(element);
+			// return if it doesn't exist
+			if (!document.contains(document.getElementById("monster_" + y + "_" + z))) {
+						return;
+					}
+			var creature = document.getElementById("monster_" + y + "_" + z);
+			document.getElementById("main").removeChild(creature);
+			// Sidebar
+			var sidebar_monster = document.getElementById("sidebar_monster_" + y + "_" + z);
+			document.getElementById("sidebar").removeChild(sidebar_monster);
+		}
+
+		function sidebar_add_creature() {
+			y = document.getElementById("monsterSpawn").value;
+			z = document.getElementById("monsterSpawnNumber").value;
+			var sidebarDiv = document.createElement("div");
+				sidebarDiv.id = "sidebar_monster_" + y + "_" + z;
+				var divLabel = document.createTextNode(y + " " + z + ": ");
+				var divInput = document.createElement("input");
+					divInput.setAttribute("type", "text");
+				sidebarDiv.appendChild(divLabel);
+				sidebarDiv.appendChild(divInput);
+			document.getElementById("sidebar").appendChild(sidebarDiv);
+		}
+		function sidebar_remove_creature() {
+			y = document.getElementById("monsterSpawn").value;
+			z = document.getElementById("monsterSpawnNumber").value;
+			var sidebar_monster = document.getElementById("sidebar_monster_" + y + "_" + z);
+			document.getElementById("sidebar").removeChild(sidebar_monster);
 		}
 
 		function spawn_player(characterName) {
-			// Destroy if it already exists
+			// Destroy div if it already exists
 			if (document.contains(document.getElementById(characterName))) {
             document.getElementById(characterName).remove();
 					}
@@ -185,8 +213,21 @@
 								 parseInt(htmlStyles.getPropertyValue("--tile-width"))
 							 ]});
 			document.getElementById("main").appendChild(div);
-		}
 
+			// Keep the sidebar if that already exists
+			if (document.contains(document.getElementById("sidebar_" + characterName))) {
+						return;
+					}
+			var sidebarDiv = document.createElement("div");
+				sidebarDiv.id = "sidebar_" + characterName;
+				var divLabel = document.createTextNode(characterName + ": ");
+				var divInput = document.createElement("input");
+					divInput.setAttribute("type", "text");
+				sidebarDiv.appendChild(divLabel);
+				sidebarDiv.appendChild(divInput);
+			document.getElementById("sidebar").appendChild(sidebarDiv);
+
+		}
 		function spawn_players() {
 			spawn_player("Choke");
 			spawn_player("FaceSmasher");
@@ -194,6 +235,7 @@
 			spawn_player("Lucy");
 			spawn_player("Wen");
 		}
+
 
 	</script>
 
@@ -204,10 +246,19 @@
 	<div class="sidebar" style="display:none" id = "sidebar">
 	   <button onclick="sidebar_close()" type="Button">☰</button>
 	   <br>
+		 <label for="backgroundInput">Map:</label><br>
+		 <select id="backgroundInput" oninput="background_update()">
+			 <option value="towncross.jpg">Town Cross</option>
+			 <option value="mine.png">Mine</option>
+			 <option value="townmarket.png">Town Market</option>
+			 <option value="testmapfromreddit.jpg">Test map </option>
+		 </select>
+
+		 <br>
 
 		<form>
 			<label for="gridColourInput">Grid Colour:</label>
-			<select id="gridColourInput" onclick="value_update()">
+			<select id="gridColourInput" onclick="value_update_line_colour()">
 				<option value="Black">Black</option>
 				<option value="Red">Red</option>
 				<option value="White">White</option>
@@ -215,7 +266,7 @@
 			</select><br>
 
 			<label for="gridWidthInput">Grid Width:</label>
-			<select id="gridWidthInput" onclick="value_update()">
+			<select id="gridWidthInput" onclick="value_update_line_width()">
 				<option value="0">Hidden</option>
 				<option value="1">1</option>
 				<option value="2" selected>2</option>
@@ -223,47 +274,42 @@
 			</select><br>
 
 			<label for="tileWidth">Tile Width:</label><br>
-			<input type="range" id="tileWidthInput" name="tileWidth" min="5" max="250" value="70" oninput="value_update()"><br>
+			<input type="range" id="tileWidthInput" name="tileWidth" min="5" max="250" value="70" oninput="this.form.tileWidthInputNumeric.value=this.value; value_update_grid_size()"/>
+			<input type="number" name="tileWidthInputNumeric" min="5" max="250" value="70" oninput="this.form.tileWidthInput.value=this.value; value_update_grid_size()"/>
+			<br>
 			<label for="tileXOffset">X Offset:</label><br>
-			<input type="range" id="tileXOffsetInput" name="tileXOffset" min="-125" max="125" value="10" oninput="value_update()"><br>
+			<input type="range" id="tileXOffsetInput" name="tileXOffset" min="-125" max="125" value="10" oninput="this.form.tileXOffsetInputNumeric.value=this.value; value_update_grid_x_offset()"/>
+			<input type="number" name="tileXOffsetInputNumeric" min="-125" max="125" value="10" oninput="this.form.tileXOffsetInput.value=this.value; value_update_grid_x_offset()"/>
+			<br>
 			<label for="tileYOffset">Y Offset:</label><br>
-			<input type="range" id="tileYOffsetInput" name="tileYOffset" min="-125" max="125" value="10" oninput="value_update()">
-		</form><br>
+			<input type="range" id="tileYOffsetInput" name="tileYOffset" min="-125" max="125" value="10" oninput="this.form.tileYOffsetInputNumeric.value=this.value; value_update_grid_y_offset()"/>
+			<input type="number" name="tileYOffsetInputNumeric" min="-125" max="125" value="10" oninput="this.form.tileYOffsetInput.value=this.value; value_update_grid_y_offset()"/>
+		</form>
 
-		Monster:<br>
+		Creature:<br>
+		<select id="monsterSpawnSize">
+			<option value="medium">Medium</option>
+			<option value="large" >Large </option>
+			<option value="huge"  >Huge  </option>
+		</select>
 		<select id="monsterSpawn">
-			<option value="owlbear">Owl Bear</option>
-			<option value="beholder">Beholder</option>
+			<option value="owlbear.gif">Owl Bear</option>
+			<option value="beholder.png">Beholder</option>
 		</select>
 		<select id="monsterSpawnNumber">
-			<option value=""> 0</option>
+			<option value="0">0</option>
 			<option value="1">1</option>
 			<option value="2">2</option>
 			<option value="3">3</option>
 			<option value="4">4</option>
 			<option value="5">5</option>
 		</select>
-		<select id="monsterSpawnSize">
-			<option value="medium">Medium</option>
-			<option value="large" >Large </option>
-			<option value="huge"  >Huge  </option>
-		</select>
 		<br>
-		<button onclick="spawn_creature()" type="Button">Spawn Monster</button>
-		<button onclick="destroy_creature()" type="Button">Remove Monster</button>
-
-		<br><br>
-
-		<label for="backgroundInput">Map:</label><br>
-		<select id="backgroundInput" oninput="background_update()">
-			<option value="towncross.jpg">Town Cross</option>
-			<option value="mine.png">Mine</option>
-			<option value="townmarket.png">Town Market</option>
-		</select>
-
-		<br><br>
-
+		<button onclick="spawn_creature()"   type="Button">Spawn</button>
+		<button onclick="destroy_creature()" type="Button">Remove</button>
+		<br>
 		<button onclick="spawn_players()" type="Button">Refresh Players</button>
+    <br><br>
 
 	</div>
 
