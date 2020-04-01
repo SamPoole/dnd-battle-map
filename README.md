@@ -1,12 +1,13 @@
 # dnd-battle-map
 
-[See this hosted on github.io!](https://sampoole.github.io/dnd-battle-map/index.html)
+[Hosted on github.io!](https://sampoole.github.io/dnd-battle-map/index.html)
 
 TODO
-- Write the readme
-- Fix the map swap
-- Make sliders display/allow text input
-- Autopopulate selects with JSON.
+- Write the README
+- Fix the map swap: **?!**
+- ~~Cosmetic change: creature/player size to fit entirely within cell, rather than overlap top/left~~
+- ~~Make sliders display/allow text input~~
+- Auto-populate selects with JSON.
  - Python/bash script to filesystem trawl and generate JSON.
  - Nested for monster/map classifying
   - Add more creatures
@@ -14,7 +15,6 @@ TODO
  - Allow text input search for map/creature.
   - Autocomplete suggestions?
   - filter dropdowns as it goes?
-- Change creature/player size to fit entirely within cell, rather than overlap top/left
 
 
 - Statuses/concentration on characters/creatures
